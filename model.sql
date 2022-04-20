@@ -152,3 +152,6 @@ CREATE DEFINER=`Audrey`@`localhost` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UP
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error, you cannot change the type of an attribute!';
 	END IF;
 END
+
+INSERT INTO datatypes (datatype) VALUES
+('int'), ('decimal'), ('float'), ('varchar'), ('date'), ('time');
