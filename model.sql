@@ -4,3 +4,4 @@ CREATE TABLE 'models' (
     'modelDate' date NOT NULL,
     PRIMARY KEY ('modelName')
 );
+
