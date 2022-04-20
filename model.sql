@@ -174,3 +174,23 @@ INSERT INTO attributes (attributeName, rsName, modelName, datatype) VALUES
 ('description', 'Departments', 'Sample Model', 'varchar'),
 ('abbreviation', 'Departments', 'Sample Model', 'varchar');
 
+INSERT INTO attributes (attributeName, rsName, modelName, datatype) VALUES
+('employeeID', 'Employees', 'Sample Model', 'varchar');
+
+INSERT INTO candidatekeys (candidateKeyName, rsName, modelName) VALUES
+('Employees Primary Key', 'Employees', 'Sample Model'),
+('Departments Primary Key', 'Departments', 'Sample Model');
+
+INSERT INTO candidatekeyattributes (rsName, modelName, ckName, attributeName, orderNumber) VALUES
+('Employees', 'Sample Model', 'Employees Primary Key', 'employeeID', 1),
+('Departments', 'Sample Model', 'Departments Primary Key', 'name', 1);
+
+INSERT INTO candidatekeys (candidateKeyName, rsName, modelName) VALUES
+('Employees Candidate Key', 'Employees', 'Sample Model');
+
+INSERT INTO candidatekeyattributes (rsName, modelName, ckName, attributeName, orderNumber) VALUES
+('Employees', 'Sample Model', 'Employees Candidate Key', 'SSN', 1);
+
+INSERT INTO decimals (`precision`, scale, modelName, rsName, attributeName, datatype) VALUES
+(10, 2, 'Sample Model', 'Employees', 'annualSalary', 'decimal');
+
