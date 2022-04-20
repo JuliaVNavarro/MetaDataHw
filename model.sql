@@ -155,3 +155,10 @@ END
 
 INSERT INTO datatypes (datatype) VALUES
 ('int'), ('decimal'), ('float'), ('varchar'), ('date'), ('time');
+
+INSERT INTO models (modelName, modelDescription, modelDate) VALUES
+('Sample Model', 'A sample of a model', '2022-04-19');
+
+INSERT INTO relationschemes (rsName, rsDescription, rsModelName) VALUES
+('Employees', 'A person who works for a company', 'Sample Model'),
+('Departments', 'A part of a company', 'Sample Model');
