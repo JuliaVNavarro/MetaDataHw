@@ -103,4 +103,52 @@ BEGIN
 		SET message = CONCAT('Error, unable to set these properties for attribute that is not: ', attribute_type);
 		SIGNAL SQLSTATE '45000' set message_text = message;
 	END IF;
+END;
+
+CREATE DEFINER=`Audrey`@`localhost` TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
+	-- Make sure that this is a decimal category of a proper decimal attribute.
+	CALL attributes_check_type (new.attributeName, 'decimal');
+END;
+
+CREATE DEFINER=`Audrey`@`localhost` TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
+	-- Make sure that this is a decimal category of a proper decimal attribute.
+	CALL attributes_check_type (new.attributeName, 'varchar');
+END;
+
+CREATE DEFINER=`Audrey`@`localhost` PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
+/**
+	Check the supplied attribute to make sure that if it is a datatype that needs
+	additional information regarding the storage of the attribute, that we have
+	a corresponding row in the correct category table for that attribute.
+	@param	v_attribute_name	The namt of the attribute to check.
+*/
+BEGIN
+	IF NOT EXISTS (	SELECT	'X'
+					FROM	attributes
+                    WHERE	attributeName = v_attribute_name) THEN
+		-- Attribute does not exist, no need to check further
+		SIGNAL SQLSTATE '45000' set message_text = 'Error, unable to find that attribute';
+	ELSEIF (	SELECT	datatype
+				FROM	attributes
+                WHERE	attributeName = v_attribute_name) = 'decimal' AND
+			NOT EXISTS (	SELECT	'X'
+							FROM	decimals
+                            WHERE	attributeName = v_attribute_name) THEN
+		-- It says it's a decimal, but the category entry is missing.
+		SIGNAL SQLSTATE '45000' set message_text = 'Error, missing precision and scale for this attribute!';
+	ELSEIF (	SELECT	datatype
+				FROM	attributes
+                WHERE	attributeName = v_attribute_name) = 'varchar' AND
+			NOT EXISTS (	SELECT	'X'
+							FROM	varchars
+                            WHERE	attributeName = v_attribute_name) THEN
+		-- It says it's a varchar, but the category entry is missing.
+		SIGNAL SQLSTATE '45000' set message_text = 'Error, missing length for this attribute!';
+	END IF;
+END;
+
+CREATE DEFINER=`Audrey`@`localhost` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
+	IF new.datatype <> old.attributeName THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error, you cannot change the type of an attribute!';
+	END IF;
 END
