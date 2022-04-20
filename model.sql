@@ -5,3 +5,4 @@ CREATE TABLE 'models' (
     PRIMARY KEY ('modelName')
 );
 
+hello i'm julia
