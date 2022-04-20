@@ -162,3 +162,15 @@ INSERT INTO models (modelName, modelDescription, modelDate) VALUES
 INSERT INTO relationschemes (rsName, rsDescription, rsModelName) VALUES
 ('Employees', 'A person who works for a company', 'Sample Model'),
 ('Departments', 'A part of a company', 'Sample Model');
+
+INSERT INTO attributes (attributeName, rsName, modelName, datatype) VALUES
+('firstName', 'Employees', 'Sample Model', 'varchar'),
+('lastName', 'Employees', 'Sample Model', 'varchar'),
+('SSN', 'Employees', 'Sample Model', 'int'),
+('annualSalary', 'Employees', 'Sample Model', 'decimal'),
+('hireDate', 'Employees', 'Sample Model', 'date'),
+('incentiveCompensationPercentage', 'Employees', 'Sample Model', 'float'),
+('name', 'Departments', 'Sample Model', 'varchar'),
+('description', 'Departments', 'Sample Model', 'varchar'),
+('abbreviation', 'Departments', 'Sample Model', 'varchar');
+
