@@ -82,7 +82,7 @@ CREATE TABLE `varchars` (
     CONSTRAINT `varchar_pos` CHECK (length > 1 AND length < 65536)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE DEFINER=`Audrey`@`localhost` PROCEDURE `attributes_check_type`(
+CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` PROCEDURE `attributes_check_type`(
 	IN in_attribute_name VARCHAR(64), IN attribute_type VARCHAR(20))
     /**
     Validate that the attribute type value in the attribute matches the supplied value.
@@ -105,17 +105,17 @@ BEGIN
 	END IF;
 END;
 
-CREATE DEFINER=`Audrey`@`localhost` TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
+CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
 	CALL attributes_check_type (new.attributeName, 'decimal');
 END;
 
-CREATE DEFINER=`Audrey`@`localhost` TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
+CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
 	CALL attributes_check_type (new.attributeName, 'varchar');
 END;
 
-CREATE DEFINER=`Audrey`@`localhost` PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
+CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
 /**
 	Check the supplied attribute to make sure that if it is a datatype that needs
 	additional information regarding the storage of the attribute, that we have
@@ -147,11 +147,11 @@ BEGIN
 	END IF;
 END;
 
-CREATE DEFINER=`Audrey`@`localhost` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
+CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
 	IF new.datatype <> old.attributeName THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error, you cannot change the type of an attribute!';
 	END IF;
-END
+END;
 
 INSERT INTO datatypes (datatype) VALUES
 ('int'), ('decimal'), ('float'), ('varchar'), ('date'), ('time');
@@ -193,4 +193,3 @@ INSERT INTO candidatekeyattributes (rsName, modelName, ckName, attributeName, or
 
 INSERT INTO decimals (`precision`, scale, modelName, rsName, attributeName, datatype) VALUES
 (10, 2, 'Sample Model', 'Employees', 'annualSalary', 'decimal');
-
