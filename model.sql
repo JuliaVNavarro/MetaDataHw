@@ -62,7 +62,9 @@ CREATE TABLE `decimals` (
     CONSTRAINT  `decimals_attributes_fk_01` FOREIGN KEY (`modelName`) REFERENCES `attributes` (`modelName`),
     CONSTRAINT  `decimals_attributes_fk_02` FOREIGN KEY (`rsName`) REFERENCES `attributes` (`rsName`),
     CONSTRAINT  `decimals_attributes_fk_03` FOREIGN KEY (`attributeName`) REFERENCES `attributes` (`rsName`),
-    CONSTRAINT  `decimals_attributes_fk_04`  FOREIGN KEY (`datatype`) REFERENCES `attributes` (`datatype`)
+    CONSTRAINT  `decimals_attributes_fk_04`  FOREIGN KEY (`datatype`) REFERENCES `attributes` (`datatype`),
+    CONSTRAINT `scale_range` CHECK (scale > 0 AND scale <= `precision`),
+    CONSTRAINT `precision_range` CHECK (`precision` > scale AND `precision` < 66)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `varchars` (
@@ -76,5 +78,6 @@ CREATE TABLE `varchars` (
     CONSTRAINT  `varchars_attributes_fk_01` FOREIGN KEY (`modelName`) REFERENCES `attributes` (`modelName`),
     CONSTRAINT  `varchars_attributes_fk_02` FOREIGN KEY (`rsName`) REFERENCES `attributes` (`rsName`),
     CONSTRAINT  `varchars_attributes_fk_03` FOREIGN KEY (`attributeName`) REFERENCES `attributes` (`rsName`),
-    CONSTRAINT  `varchars_attributes_fk_04`  FOREIGN KEY (`datatype`) REFERENCES `attributes` (`datatype`)
+    CONSTRAINT  `varchars_attributes_fk_04`  FOREIGN KEY (`datatype`) REFERENCES `attributes` (`datatype`),
+    CONSTRAINT `varchar_pos` CHECK (length > 1 AND length < 65536)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
