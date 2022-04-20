@@ -81,3 +81,26 @@ CREATE TABLE `varchars` (
     CONSTRAINT  `varchars_attributes_fk_04`  FOREIGN KEY (`datatype`) REFERENCES `attributes` (`datatype`),
     CONSTRAINT `varchar_pos` CHECK (length > 1 AND length < 65536)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE DEFINER=`Audrey`@`localhost` PROCEDURE `attributes_check_type`(
+	IN in_attribute_name VARCHAR(64), IN attribute_type VARCHAR(20))
+    /**
+    Validate that the attribute type value in the attribute matches the supplied value.
+    This is used in the on insert trigger for the varchar and decimal categories of
+    attribute.
+    @param		in_attribute_name	The attribute that we're checking.
+    @param		in_attribute_type	The type that it should have.
+    */
+BEGIN
+	DECLARE message VARCHAR(100);
+    IF (SELECT	count(*)
+		FROM	attributes
+        WHERE	attributeName = in_attribute_name) <> 1 THEN
+		SIGNAL SQLSTATE '45000' set message_text = 'Error, unable to find that attribute';
+	ELSEIF (SELECT	attributeName
+			FROM	attributes
+			WHERE	attributeName = in_attribute_name) <> attribute_type THEN
+		SET message = CONCAT('Error, unable to set these properties for attribute that is not: ', attribute_type);
+		SIGNAL SQLSTATE '45000' set message_text = message;
+	END IF;
+END
