@@ -24,8 +24,7 @@ CREATE TABLE `attributes` (
     `modelName` VARCHAR(100) NOT NULL,
     `datatype` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`attributeName`, `rsName`, `modelName`, `datatype`),
-    CONSTRAINT `attributes_rs_fk_01` FOREIGN KEY (`rsName`) REFERENCES `relationschemes` (`rsName`),
-    CONSTRAINT `attributes_rs_fk_02` FOREIGN KEY (`modelName`) REFERENCES `relationschemes` (`rsModelName`),
+    CONSTRAINT `attributes_rs_fk_01` FOREIGN KEY (`rsName`, `modelName`) REFERENCES `relationschemes` (`rsName`, rsModelName),
     CONSTRAINT `attributes_datatypes_fk_01` FOREIGN KEY (`datatype`) REFERENCES `datatypes` (`datatype`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -34,8 +33,7 @@ CREATE TABLE `candidatekeys` (
     `rsName` VARCHAR(100) NOT NULL,
     `modelName` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`candidateKeyName`, `modelName`),
-    CONSTRAINT `ck_rs_fk_01` FOREIGN KEY (`rsName`) REFERENCES `relationschemes` (`rsName`),
-    CONSTRAINT `ck_rs_fk_02` FOREIGN KEY (`modelName`) REFERENCES `relationschemes` (`rsModelName`)
+    CONSTRAINT `ck_rs_fk_01` FOREIGN KEY (`rsName`, `modelName`) REFERENCES `relationschemes` (`rsName`, rsModelName)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `candidatekeyattributes` (
@@ -44,10 +42,8 @@ CREATE TABLE `candidatekeyattributes` (
     `ckName` VARCHAR(100) NOT NULL,
     `attributeName` VARCHAR(100) NOT NULL,
     `orderNumber` VARCHAR(100) NOT NULL,
-    PRIMARY KEY (`modelName`, `rsName`, `ckName`, `attributeName`),
-    CONSTRAINT `cka_attributes_fk_01` FOREIGN KEY (`modelName`) REFERENCES `attributes` (`modelName`),
-    CONSTRAINT `cka_attributes_fk_02` FOREIGN KEY (`rsName`) REFERENCES `attributes` (`rsName`),
-    CONSTRAINT `cka_attributes_fk_03` FOREIGN KEY (`attributeName`) REFERENCES `attributes` (`attributeName`),
+    PRIMARY KEY (attributeName, `modelName`, `rsName`, `ckName`),
+    CONSTRAINT `cka_attributes_fk_01` FOREIGN KEY (rsName, modelName, attributeName) REFERENCES `attributes` (rsName, modelName, attributeName),
     CONSTRAINT `cka_ck_fk_01` FOREIGN KEY (`ckName`) REFERENCES `candidatekeys` (`candidateKeyName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -59,30 +55,23 @@ CREATE TABLE `decimals` (
     `attributeName` VARCHAR(100) NOT NULL,
     `datatype`  VARCHAR(100) NOT NULL,
     PRIMARY KEY (`modelName`, `rsName`, `attributeName`, `datatype`),
-    CONSTRAINT  `decimals_attributes_fk_01` FOREIGN KEY (`modelName`) REFERENCES `attributes` (`modelName`),
-    CONSTRAINT  `decimals_attributes_fk_02` FOREIGN KEY (`rsName`) REFERENCES `attributes` (`rsName`),
-    CONSTRAINT  `decimals_attributes_fk_03` FOREIGN KEY (`attributeName`) REFERENCES `attributes` (`rsName`),
-    CONSTRAINT  `decimals_attributes_fk_04`  FOREIGN KEY (`datatype`) REFERENCES `attributes` (`datatype`),
+    CONSTRAINT  `decimals_attributes_fk_01` FOREIGN KEY (attributeName, rsName, modelName, datatype) REFERENCES `attributes` (attributeName, rsName, modelName, datatype),
     CONSTRAINT `scale_range` CHECK (scale > 0 AND scale <= `precision`),
     CONSTRAINT `precision_range` CHECK (`precision` > scale AND `precision` < 66)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `varchars` (
     `length` INT NOT NULL,
-    `maxSize` INT NOT NULL,
     `modelName` VARCHAR(100) NOT NULL,
     `rsName` VARCHAR(100) NOT NULL,
     `attributeName` VARCHAR(100) NOT NULL,
     `datatype` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`modelName`, `rsName`, `attributeName`, `datatype`),
-    CONSTRAINT  `varchars_attributes_fk_01` FOREIGN KEY (`modelName`) REFERENCES `attributes` (`modelName`),
-    CONSTRAINT  `varchars_attributes_fk_02` FOREIGN KEY (`rsName`) REFERENCES `attributes` (`rsName`),
-    CONSTRAINT  `varchars_attributes_fk_03` FOREIGN KEY (`attributeName`) REFERENCES `attributes` (`rsName`),
-    CONSTRAINT  `varchars_attributes_fk_04`  FOREIGN KEY (`datatype`) REFERENCES `attributes` (`datatype`),
+    CONSTRAINT  `varchars_attributes_fk_01` FOREIGN KEY (attributeName, rsName, modelName, datatype) REFERENCES `attributes` (attributeName, rsName, modelName, datatype),
     CONSTRAINT `varchar_pos` CHECK (length > 1 AND length < 65536)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` PROCEDURE `attributes_check_type`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `attributes_check_type`(
 	IN in_attribute_name VARCHAR(64), IN attribute_type VARCHAR(20))
     /**
     Validate that the attribute type value in the attribute matches the supplied value.
@@ -97,7 +86,7 @@ BEGIN
 		FROM	attributes
         WHERE	attributeName = in_attribute_name) <> 1 THEN
 		SIGNAL SQLSTATE '45000' set message_text = 'Error, unable to find that attribute';
-	ELSEIF (SELECT	attributeName
+	ELSEIF (SELECT	datatype
 			FROM	attributes
 			WHERE	attributeName = in_attribute_name) <> attribute_type THEN
 		SET message = CONCAT('Error, unable to set these properties for attribute that is not: ', attribute_type);
@@ -105,17 +94,17 @@ BEGIN
 	END IF;
 END;
 
-CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
+CREATE DEFINER=`root`@`localhost` TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
 	CALL attributes_check_type (new.attributeName, 'decimal');
 END;
 
-CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
+CREATE DEFINER=`root`@`localhost` TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
 	CALL attributes_check_type (new.attributeName, 'varchar');
 END;
 
-CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
 /**
 	Check the supplied attribute to make sure that if it is a datatype that needs
 	additional information regarding the storage of the attribute, that we have
@@ -147,7 +136,7 @@ BEGIN
 	END IF;
 END;
 
-CREATE DEFINER=`CECS3232022SpringS03N19s`@`10.%` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
+CREATE DEFINER=`root`@`localhost` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
 	IF new.datatype <> old.attributeName THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error, you cannot change the type of an attribute!';
 	END IF;
@@ -193,3 +182,6 @@ INSERT INTO candidatekeyattributes (rsName, modelName, ckName, attributeName, or
 
 INSERT INTO decimals (`precision`, scale, modelName, rsName, attributeName, datatype) VALUES
 (10, 2, 'Sample Model', 'Employees', 'annualSalary', 'decimal');
+
+INSERT INTO varchars (length, modelName, rsName, attributeName, datatype) VALUES
+(100, 'Sample Model', 'Employees', 'firstName', 'varchar');
