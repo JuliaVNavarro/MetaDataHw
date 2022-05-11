@@ -1,75 +1,115 @@
 CREATE TABLE `models` (
-    `modelName` VARCHAR(100) NOT NULL,
-    `modelDescription` VARCHAR(100) NOT NULL,
-    `modelDate` date NOT NULL,
-    PRIMARY KEY (`modelName`)
+    `model_name` VARCHAR(100) NOT NULL,
+    `model_description` VARCHAR(100) NOT NULL,
+    `model_date` date NOT NULL,
+    PRIMARY KEY `models_pk` (`model_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `relationschemes` (
-    `rsName` VARCHAR(100) NOT NULL,
-    `rsDescription` VARCHAR(100) NOT NULL,
-    `rsModelName` VARCHAR(100) NOT NULL,
-    PRIMARY KEY (`rsName`, `rsModelName`),
-    CONSTRAINT `rs_models_fk_01` FOREIGN KEY (`rsModelName`) REFERENCES `models` (`modelName`)
+CREATE TABLE `relation_schemes` (
+    `rs_name` VARCHAR(100) NOT NULL,
+    `rs_description` VARCHAR(100) NOT NULL,
+    `rs_model_name` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `relation_schemes_pk` (`rs_name`, `rs_model_name`),
+    CONSTRAINT `rs_models_fk_01` FOREIGN KEY (`rs_model_name`) REFERENCES `models` (`model_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `datatypes` (
-    `datatype` VARCHAR(100) NOT NULL,
-    PRIMARY KEY (`datatype`)
+CREATE TABLE `data_types` (
+    `data_type` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `data_types_pk` (`data_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `attributes` (
-    `attributeName` VARCHAR(100) NOT NULL,
-    `rsName` VARCHAR(100) NOT NULL,
-    `modelName` VARCHAR(100) NOT NULL,
-    `datatype` VARCHAR(100) NOT NULL,
-    PRIMARY KEY (`attributeName`, `rsName`, `modelName`, `datatype`),
-    CONSTRAINT `attributes_rs_fk_01` FOREIGN KEY (`rsName`, `modelName`) REFERENCES `relationschemes` (`rsName`, rsModelName),
-    CONSTRAINT `attributes_datatypes_fk_01` FOREIGN KEY (`datatype`) REFERENCES `datatypes` (`datatype`)
+    `attribute_name` VARCHAR(100) NOT NULL,
+    `rs_name` VARCHAR(100) NOT NULL,
+    `model_name` VARCHAR(100) NOT NULL,
+    `data_type` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `attributes_pk` (`attribute_name`, `rs_name`, `model_name`),
+    CONSTRAINT `attributes_rs_fk_01` FOREIGN KEY (`rs_name`, `model_name`) REFERENCES `relation_schemes` (`rs_name`, rs_model_name),
+    CONSTRAINT `attributes_data_types_fk_01` FOREIGN KEY (`data_type`) REFERENCES `data_types` (`data_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `candidatekeys` (
-    `candidateKeyName` VARCHAR(100) NOT NULL,
-    `rsName` VARCHAR(100) NOT NULL,
-    `modelName` VARCHAR(100) NOT NULL,
-    PRIMARY KEY (`candidateKeyName`, `modelName`),
-    CONSTRAINT `ck_rs_fk_01` FOREIGN KEY (`rsName`, `modelName`) REFERENCES `relationschemes` (`rsName`, rsModelName)
+CREATE TABLE `candidate_keys` (
+    `candidate_key_name` VARCHAR(100) NOT NULL,
+    `rs_name` VARCHAR(100) NOT NULL,
+    `model_name` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `candidate_keys_pk` (`candidate_key_name`, `model_name`),
+    CONSTRAINT `candidate_keys_relation_schemes_fk_01` FOREIGN KEY (`rs_name`, `model_name`) REFERENCES `relation_schemes` (`rs_name`, `rs_model_name`),
+    CONSTRAINT `candidate_keys_models_fk_02` FOREIGN KEY (`model_name`) REFERENCES `models` (`model_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `candidatekeyattributes` (
-    `rsName` VARCHAR(100) NOT NULL,
-    `modelName` VARCHAR(100) NOT NULL,
-    `ckName` VARCHAR(100) NOT NULL,
-    `attributeName` VARCHAR(100) NOT NULL,
-    `orderNumber` VARCHAR(100) NOT NULL,
-    PRIMARY KEY (attributeName, `modelName`, `rsName`, `ckName`),
-    CONSTRAINT `cka_attributes_fk_01` FOREIGN KEY (rsName, modelName, attributeName) REFERENCES `attributes` (rsName, modelName, attributeName),
-    CONSTRAINT `cka_ck_fk_01` FOREIGN KEY (`ckName`) REFERENCES `candidatekeys` (`candidateKeyName`)
+CREATE TABLE `primary_keys` (
+    `model_name` VARCHAR(100) NOT NULL,
+    `pk_name` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `primary_keys_pk` (`model_name`, `pk_name`),
+    CONSTRAINT `primary_keys_ck_fk_01` FOREIGN KEY (`model_name`, `pk_name`) REFERENCES `candidate_keys` (`model_name`, `candidate_key_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `candidate_key_attributes` (
+    `rs_name` VARCHAR(100) NOT NULL,
+    `model_name` VARCHAR(100) NOT NULL,
+    `ck_name` VARCHAR(100) NOT NULL,
+    `attribute_name` VARCHAR(100) NOT NULL,
+    `order_number` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `candidate_key_attributes_pk` (`attribute_name`, `model_name`, `rs_name`, `ck_name`),
+    CONSTRAINT UNIQUE `candidate_key_attributes_uk_01` (`model_name`, `ck_name`, `order_number`),
+    CONSTRAINT `cka_attributes_fk_01` FOREIGN KEY (`rs_name`, `model_name`, `attribute_name`) REFERENCES `attributes` (`rs_name`, `model_name`, `attribute_name`),
+    CONSTRAINT `cka_ck_fk_01` FOREIGN KEY (`ck_name`, `model_name`) REFERENCES `candidate_keys` (`candidate_key_name`, `model_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `decimals` (
     `precision` INT NOT NULL,
     `scale`     INT NOT NULL,
-    `modelName` VARCHAR(100) NOT NULL,
-    `rsName`    VARCHAR(100) NOT NULL,
-    `attributeName` VARCHAR(100) NOT NULL,
-    `datatype`  VARCHAR(100) NOT NULL,
-    PRIMARY KEY (`modelName`, `rsName`, `attributeName`, `datatype`),
-    CONSTRAINT  `decimals_attributes_fk_01` FOREIGN KEY (attributeName, rsName, modelName, datatype) REFERENCES `attributes` (attributeName, rsName, modelName, datatype),
+    `model_name` VARCHAR(100) NOT NULL,
+    `rs_name`    VARCHAR(100) NOT NULL,
+    `attribute_name` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `decimals_pk` (`model_name`, `rs_name`, `attribute_name`),
+    CONSTRAINT  `decimals_attributes_fk_01` FOREIGN KEY (`attribute_name`, `rs_name`, `model_name`) REFERENCES `attributes` (`attribute_name`, `rs_name`, `model_name`),
     CONSTRAINT `scale_range` CHECK (scale > 0 AND scale <= `precision`),
     CONSTRAINT `precision_range` CHECK (`precision` > scale AND `precision` < 66)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `varchars` (
     `length` INT NOT NULL,
-    `modelName` VARCHAR(100) NOT NULL,
-    `rsName` VARCHAR(100) NOT NULL,
-    `attributeName` VARCHAR(100) NOT NULL,
-    `datatype` VARCHAR(100) NOT NULL,
-    PRIMARY KEY (`modelName`, `rsName`, `attributeName`, `datatype`),
-    CONSTRAINT  `varchars_attributes_fk_01` FOREIGN KEY (attributeName, rsName, modelName, datatype) REFERENCES `attributes` (attributeName, rsName, modelName, datatype),
-    CONSTRAINT `varchar_pos` CHECK (length > 1 AND length < 65536)
+    `model_name` VARCHAR(100) NOT NULL,
+    `rs_name` VARCHAR(100) NOT NULL,
+    `attribute_name` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `varchars_pk` (`model_name`, `rs_name`, `attribute_name`),
+    CONSTRAINT  `varchars_attributes_fk_01` FOREIGN KEY (`attribute_name`, `rs_name`, `model_name`) REFERENCES `attributes` (`attribute_name`, `rs_name`, `model_name`),
+    CONSTRAINT `varchar_pos` CHECK (`length` > 1 AND `length` < 65536)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `relationships` (
+    `relationship_name` VARCHAR(100) NOT NULL,
+    `model_name` VARCHAR(100) NOT NULL,
+    `rs_name` VARCHAR(100) NOT NULL,
+    `min_parent_cardinality` INT NOT NULL,
+    `max_parent_cardinality` INT NOT NULL,
+    `min_child_cardinality` INT NOT NULL,
+    `max_child_cardinality` INT NOT NULL,
+    `parent` VARCHAR(100) NOT NULL,
+    `child` VARCHAR(100) NOT NULL,
+    `pk_name` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `relationships_pk` (`relationship_name`, `model_name`),
+    CONSTRAINT `relationships_model_fk_01` FOREIGN KEY (`model_name`) REFERENCES `models` (`model_name`),
+    CONSTRAINT `relationships_rs_fk_01` FOREIGN KEY (`model_name`,`rs_name`) REFERENCES `relation_schemes` (`rs_model_name`, `rs_name`),
+    CONSTRAINT `relationships_primary_keys_fk_01` FOREIGN KEY (`model_name`, `pk_name`) REFERENCES `primary_keys` (`model_name`, `pk_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `attribute_relationships` (
+    `migrated_attribute` VARCHAR(100) NOT NULL,
+    `relationship_name` VARCHAR(100) NOT NULL,
+    `child_rs_name` VARCHAR(100) NOT NULL,
+    `model_name` VARCHAR(100) NOT NULL,
+    `ck_name` VARCHAR(100) NOT NULL,
+    `parent_rs_name` VARCHAR(100) NOT NULL,
+    `parent_key_attribute` VARCHAR(100) NOT NULL,
+    PRIMARY KEY `attribute_relationships_pk` (`relationship_name`, `model_name`, `parent_rs_name`, `parent_key_attribute`),
+    CONSTRAINT UNIQUE `attribute_relationships_uk_01` (`migrated_attribute`, `relationship_name`, `child_rs_name`, `model_name`),
+    CONSTRAINT `attribute_relationships_attributes_fk_01` FOREIGN KEY (`migrated_attribute`, `child_rs_name`, `model_name`) REFERENCES `attributes` (`attribute_name`, `rs_name`, `model_name`),
+    CONSTRAINT `attribute_relationships_relationships_fk_01` FOREIGN KEY (`relationship_name`, `model_name`) REFERENCES `relationships` (`relationship_name`, `model_name`),
+    CONSTRAINT `attribute_relationships_pk_fk_01` FOREIGN KEY (`model_name`, `ck_name`) REFERENCES `primary_keys` (`model_name`, `pk_name`),
+    CONSTRAINT `attribute_relationships_cka_fk_01` FOREIGN KEY (`parent_key_attribute`, `model_name`, `parent_rs_name`, `ck_name`) REFERENCES `candidate_key_attributes` (`attribute_name`, `model_name`, `rs_name`, `ck_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `attributes_check_type`(
 	IN in_attribute_name VARCHAR(64), IN attribute_type VARCHAR(20))
