@@ -294,3 +294,20 @@ insert into relationships (relationship_name, model_name, rs_name, min_parent_ca
 ('sections_enrollments_relationship', 'MetaData Model', 'sections', 1, 1, 0, 'MANY', 'sections', 'enrollments', 'sections_pk'),
 ('courses_sections_relationship', 'MetaData Model', 'courses', 1, 1, 0, 'MANY', 'courses', 'sections', 'courses_pk'),
 ('departments_courses_relationships', 'MetaData Model', 'departments', 1, 1, 1, 'MANY', 'departments', 'courses', 'departments_pk');
+
+INSERT INTO attribute_relationships (migrated_attribute, relationship_name, child_rs_name, model_name, ck_name, parent_rs_name, parent_key_attribute) VALUES
+('student_id', 'students_enrollments_relationship', 'enrollments', 'MetaData Model', 'students_pk', 'students', 'student_id'),
+('student_id', 'enrollments_transcript_entries_relationship', 'transcript_entries', 'MetaData Model', 'enrollments_pk', 'enrollments', 'student_id'),
+('department_name', 'enrollments_transcript_entries_relationship', 'transcript_entries', 'MetaData Model', 'enrollments_pk', 'enrollments', 'department_name'),
+('course_number', 'enrollments_transcript_entries_relationship', 'transcript_entries', 'MetaData Model', 'enrollments_pk', 'enrollments', 'course_number'),
+('section_number', 'enrollments_transcript_entries_relationship', 'transcript_entries', 'MetaData Model', 'enrollments_pk', 'enrollments', 'section_number'),
+('year', 'enrollments_transcript_entries_relationship', 'transcript_entries', 'MetaData Model', 'enrollments_pk', 'enrollments', 'year'),
+('semester', 'enrollments_transcript_entries_relationship', 'transcript_entries', 'MetaData Model', 'enrollments_pk', 'enrollments', 'semester'),
+('department_name', 'sections_enrollments_relationship', 'enrollments', 'MetaData Model', 'sections_pk', 'sections', 'department_name'),
+('course_number', 'sections_enrollments_relationship', 'enrollments', 'MetaData Model', 'sections_pk', 'sections', 'course_number'),
+('section_number', 'sections_enrollments_relationship', 'enrollments', 'MetaData Model', 'sections_pk', 'sections', 'number'),
+('year', 'sections_enrollments_relationship', 'enrollments', 'MetaData Model', 'sections_pk', 'sections', 'year'),
+('semester', 'sections_enrollments_relationship', 'enrollments', 'MetaData Model', 'sections_pk', 'sections', 'semester'),
+('department_name', 'courses_sections_relationship', 'sections', 'MetaData Model', 'courses_pk', 'courses', 'name'),
+('course_number', 'courses_sections_relationship', 'sections', 'MetaData Model', 'courses_pk', 'courses', 'number'),
+('name', 'departments_courses_relationships', 'courses', 'MetaData Model', 'departments_pk', 'departments', 'name');
