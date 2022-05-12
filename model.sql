@@ -1,3 +1,5 @@
+/* DDL */
+
 CREATE TABLE `models` (
     `model_name` VARCHAR(100) NOT NULL,
     `model_description` VARCHAR(100) NOT NULL,
@@ -182,6 +184,7 @@ CREATE TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH
 	END IF;
 END;
 
+/* DML */
 INSERT INTO data_types (data_type) VALUES
 ('int'), ('decimal'), ('float'), ('varchar'), ('date'), ('time');
 
