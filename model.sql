@@ -248,3 +248,25 @@ INSERT INTO primary_keys (model_name, pk_name) VALUES
 ('MetaData Model', 'students_pk'),
 ('MetaData Model', 'enrollments_pk'),
 ('MetaData Model', 'transcript_entries_pk');
+
+INSERT INTO candidate_key_attributes (rs_name, model_name, ck_name, attribute_name, order_number) VALUES
+('students', 'MetaData Model', 'students_pk', 'student_id', 1),
+('enrollments', 'MetaData Model', 'enrollments_pk', 'student_id', 1),
+('enrollments', 'MetaData Model', 'enrollments_pk', 'department_name', 2),
+('enrollments', 'MetaData Model', 'enrollments_pk', 'course_number', 3),
+('enrollments', 'MetaData Model', 'enrollments_pk', 'section_number', 4),
+('enrollments', 'MetaData Model', 'enrollments_pk', 'year', 5),
+('enrollments', 'MetaData Model', 'enrollments_pk', 'semester', 6),
+('transcript_entries', 'MetaData Model', 'transcript_entries_pk', 'student_id', 1),
+('transcript_entries', 'MetaData Model', 'transcript_entries_pk', 'department_name', 2),
+('transcript_entries', 'MetaData Model', 'transcript_entries_pk', 'course_number', 3),
+('sections', 'MetaData Model', 'sections_pk', 'department_name', 1),
+('sections', 'MetaData Model', 'sections_pk', 'course_number', 2),
+('sections', 'MetaData Model', 'sections_pk', 'number', 3),
+('sections', 'MetaData Model', 'sections_pk', 'year', 4),
+('sections', 'MetaData Model', 'sections_pk', 'semester', 5),
+('courses', 'MetaData Model', 'courses_pk', 'name', 1),
+('courses', 'MetaData Model', 'courses_pk', 'number', 2),
+('courses', 'MetaData Model', 'courses_uk_01', 'name', 1),
+('courses', 'MetaData Model', 'courses_uk_01', 'title', 2),
+('departments', 'MetaData Model', 'departments_pk', 'name', 1);
