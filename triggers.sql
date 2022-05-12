@@ -27,11 +27,11 @@ CREATE TRIGGER `key_BEFORE_INSERT` BEFORE INSERT ON `candidate_key_attributes` F
   END IF;
 END;
 
+
 /*
---a key can only have attributes that come from the same relation scheme as the key itself
-
-
 4) A foreign key constraint cannot have the same name as a candidate key
+*/
+
 DELIMITER //
 CREATE TRIGGER `candidate_keys_BEFORE_INSERT` BEFORE INSERT ON `candidate_keys` FOR EACH ROW BEGIN
     call get_key_name(new.candidate_key_name, new.model_name);
