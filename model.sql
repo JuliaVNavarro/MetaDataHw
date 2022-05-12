@@ -185,12 +185,16 @@ END;
 INSERT INTO data_types (data_type) VALUES
 ('int'), ('decimal'), ('float'), ('varchar'), ('date'), ('time');
 
-INSERT INTO models (model_name, model_description, model_date) VALUES
-('Sample Model', 'A sample of a model', '2022-04-19');
+INSERT INTO `models` (model_name, model_description) values
+('MetaData Model', 'Model to test MetaDate Project');
 
-INSERT INTO relation_schemes (rs_name, rs_description, rs_model_name) VALUES
-('Employees', 'A person who works for a company', 'Sample Model'),
-('Departments', 'A part of a company', 'Sample Model');
+INSERT INTO `relation_schemes` (rs_name, rs_description, rs_model_name) VALUES
+('students', 'student information', 'MetaData Model'),
+('enrollments', 'enrollment information', 'MetaData Model'),
+('transcript_entries', 'transcript entry information', 'MetaData Model'),
+('sections', 'sections information', 'MetaData Model'),
+('courses', 'course information', 'MetaData Model'),
+('departments', 'department information', 'MetaData Model');
 
 INSERT INTO attributes (attribute_name, rs_name, model_name, data_type) VALUES
 ('firstName', 'Employees', 'Sample Model', 'varchar'),
