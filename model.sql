@@ -197,35 +197,38 @@ INSERT INTO `relation_schemes` (rs_name, rs_description, rs_model_name) VALUES
 ('departments', 'department information', 'MetaData Model');
 
 INSERT INTO attributes (attribute_name, rs_name, model_name, data_type) VALUES
-('firstName', 'Employees', 'Sample Model', 'varchar'),
-('lastName', 'Employees', 'Sample Model', 'varchar'),
-('SSN', 'Employees', 'Sample Model', 'int'),
-('annualSalary', 'Employees', 'Sample Model', 'decimal'),
-('hireDate', 'Employees', 'Sample Model', 'date'),
-('incentiveCompensationPercentage', 'Employees', 'Sample Model', 'float'),
-('name', 'Departments', 'Sample Model', 'varchar'),
-('description', 'Departments', 'Sample Model', 'varchar'),
-('abbreviation', 'Departments', 'Sample Model', 'varchar');
+('student_id', 'students', 'MetaData Model', 'int'),
+('last_name', 'students', 'MetaData Model', 'varchar'),
+('first_name', 'students', 'MetaData Model', 'varchar'),
+('name', 'departments', 'MetaData Model', 'varchar'),
+('name', 'courses', 'MetaData Model', 'varchar'),
+('number', 'courses', 'MetaData Model', 'int'),
+('description', 'courses', 'MetaData Model', 'varchar'),
+('units', 'courses', 'MetaData Model', 'int'),
+('title', 'courses', 'MetaData Model', 'varchar'),
+-- ('weekday_combinations', 'days', 'MetaData Model', 'varchar')
+-- ('instructor_name', 'instructors', 'MetaData Model', 'varchar')
+-- ('name', 'semesters', 'MetaData Model', 'varchar')
+('department_name', 'sections', 'MetaData Model', 'varchar'),
+('course_number', 'sections', 'MetaData Model', 'int'),
+('number', 'sections', 'MetaData Model', 'int'),
+('year', 'sections', 'MetaData Model', 'int'),
+('semester', 'sections', 'MetaData Model', 'varchar'),
+('instructor', 'sections', 'MetaData Model', 'varchar'),
+('start_time', 'sections', 'MetaData Model', 'time'),
+('days', 'sections', 'MetaData Model', 'varchar'),
+-- ('grade_letter', 'grades', 'MetaData Model', 'varchar')
+('student_id', 'enrollments', 'MetaData Model', 'int'),
+('department_name', 'enrollments', 'MetaData Model', 'varchar'),
+('course_number', 'enrollments', 'MetaData Model', 'int'),
+('sections_number', 'enrollments', 'MetaData Model', 'int'),
+('year', 'enrollments', 'MetaData Model', 'int'),
+('semester', 'enrollments', 'MetaData Model', 'varchar'),
+('grade', 'enrollments', 'MetaData Model', 'varchar'),
+('student_id', 'transcript_entries', 'MetaData Model', 'int'),
+('department_name', 'transcript_entries', 'MetaData Model', 'varchar'),
+('course_number', 'transcript_entries', 'MetaData Model', 'int'),
+('section_number', 'transcript_entries', 'MetaData Model', 'int'),
+('year', 'transcript_entries', 'MetaData Model', 'int'),
+('semester', 'transcript_entries', 'MetaData Model', 'varchar');
 
-INSERT INTO attributes (attribute_name, rs_name, model_name, data_type) VALUES
-('employeeID', 'Employees', 'Sample Model', 'varchar');
-
-INSERT INTO candidate_keys (candidate_key_name, rs_name, model_name) VALUES
-('Employees Primary Key', 'Employees', 'Sample Model'),
-('Departments Primary Key', 'Departments', 'Sample Model');
-
-INSERT INTO candidate_key_attributes (rs_name, model_name, ck_name, attribute_name, order_number) VALUES
-('Employees', 'Sample Model', 'Employees Primary Key', 'employeeID', 1),
-('Departments', 'Sample Model', 'Departments Primary Key', 'name', 1);
-
-INSERT INTO candidate_keys (candidate_key_name, rs_name, model_name) VALUES
-('Employees Candidate Key', 'Employees', 'Sample Model');
-
-INSERT INTO candidate_key_attributes (rs_name, model_name, ck_name, attribute_name, order_number) VALUES
-('Employees', 'Sample Model', 'Employees Candidate Key', 'SSN', 1);
-
-INSERT INTO decimals (`precision`, scale, model_name, rs_name, attribute_name, data_type) VALUES
-(10, 2, 'Sample Model', 'Employees', 'annualSalary', 'decimal');
-
-INSERT INTO varchars (length, model_name, rs_name, attribute_name, data_type) VALUES
-(100, 'Sample Model', 'Employees', 'firstName', 'varchar');
