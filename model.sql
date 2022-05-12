@@ -111,7 +111,7 @@ CREATE TABLE `attribute_relationships` (
     CONSTRAINT `attribute_relationships_cka_fk_01` FOREIGN KEY (`parent_key_attribute`, `model_name`, `parent_rs_name`, `ck_name`) REFERENCES `candidate_key_attributes` (`attribute_name`, `model_name`, `rs_name`, `ck_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `attributes_check_type`(
+CREATE PROCEDURE `attributes_check_type`(
 	IN in_attribute_name VARCHAR(64), IN attribute_type VARCHAR(20))
     /**
     Validate that the attribute type value in the attribute matches the supplied value.
@@ -134,17 +134,17 @@ BEGIN
 	END IF;
 END;
 
-CREATE DEFINER=`root`@`localhost` TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
+CREATE TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
 	CALL attributes_check_type (new.attribute_name, 'decimal');
 END;
 
-CREATE DEFINER=`root`@`localhost` TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
+CREATE TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
 	CALL attributes_check_type (new.attribute_name, 'varchar');
 END;
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
+CREATE PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
 /**
 	Check the supplied attribute to make sure that if it is a datatype that needs
 	additional information regarding the storage of the attribute, that we have
@@ -176,7 +176,7 @@ BEGIN
 	END IF;
 END;
 
-CREATE DEFINER=`root`@`localhost` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
+CREATE TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
 	IF new.data_type <> old.attribute_name THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error, you cannot change the type of an attribute!';
 	END IF;
@@ -270,3 +270,20 @@ INSERT INTO candidate_key_attributes (rs_name, model_name, ck_name, attribute_na
 ('courses', 'MetaData Model', 'courses_uk_01', 'name', 1),
 ('courses', 'MetaData Model', 'courses_uk_01', 'title', 2),
 ('departments', 'MetaData Model', 'departments_pk', 'name', 1);
+
+INSERT INTO varchars (length, model_name, rs_name, attribute_name) VALUES
+-- (100, 'MetaData Model', 'students', 'last_name');
+-- (100, 'MetaData Model', 'students', 'first_name');
+ (100, 'MetaData Model', 'departments', 'name');
+-- (100, 'MetaData Model', 'courses', 'name'),
+-- (100, 'MetaData Model', 'courses', 'description'),
+-- (100, 'MetaData Model', 'courses', 'title'),
+-- (100, 'MetaData Model', 'sections', 'department_name'),
+-- (100, 'MetaData Model', 'sections', 'semester'),
+-- (100, 'MetaData Model', 'sections', 'instructor'),
+-- (100, 'MetaData Model', 'sections', 'days'),
+-- (100, 'MetaData Model', 'enrollments', 'department_name'),
+-- (100, 'MetaData Model', 'enrollments', 'semester'),
+-- (100, 'MetaData Model', 'enrollments', 'grade'),
+-- (100, 'MetaData Model', 'transcript_entries', 'department_name'),
+-- (100, 'MetaData Model', 'transcript_entries', 'semester');
