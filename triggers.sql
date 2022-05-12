@@ -137,3 +137,31 @@ CREATE TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error, you cannot change the type of an attribute!';
 	END IF;
 END;
+
+CREATE PROCEDURE `split_key` (IN in_model_name VARCHAR(50), IN in_relation_scheme VARCHAR(50))
+BEGIN
+    IF (SELECT COUNT(migrated_attribute) 
+	FROM attribute_relationships
+        WHERE model_name = in_model_name
+        AND child_rs_name = in_relation_scheme
+        AND migrated_attribute NOT IN
+        (SELECT (attribute_name) 
+	 FROM candidate_key_attributes
+         WHERE model_name = in_model_name
+         AND rs_name = in_relation_scheme) <> 0)
+    THEN
+        IF (SELECT COUNT(attribute_name) 
+	    FROM candidate_key_attributes
+            WHERE model_name = in_model_name
+            AND rs_name = in_relation_scheme
+            AND attribute_name NOT IN
+            (SELECT (migrated_attribute) 
+	     FROM attribute_relationships
+             WHERE model_name = in_model_name
+             AND child_rs_name = in_relation_scheme) = 0)
+        THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Error: A foreign key constraint cannot split the key of the parent';
+        END IF;
+    END IF;
+END;
