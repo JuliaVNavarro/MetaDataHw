@@ -287,3 +287,10 @@ INSERT INTO varchars (length, model_name, rs_name, attribute_name) VALUES
 -- (100, 'MetaData Model', 'enrollments', 'grade'),
 -- (100, 'MetaData Model', 'transcript_entries', 'department_name'),
 -- (100, 'MetaData Model', 'transcript_entries', 'semester');
+
+insert into relationships (relationship_name, model_name, rs_name, min_parent_cardinality, max_parent_cardinality, min_child_cardinality, max_child_cardinality, parent, child, pk_name) values
+('students_enrollments_relationship', 'MetaData Model', 'students', 1, 1, 0, 'MANY', 'students', 'enrollments', 'students_pk'),
+('enrollments_transcript_entries_relationship', 'MetaData Model', 'enrollments', 1, 1, 0, 1, 'enrollments', 'transcript_entries', 'enrollments_pk'),
+('sections_enrollments_relationship', 'MetaData Model', 'sections', 1, 1, 0, 'MANY', 'sections', 'enrollments', 'sections_pk'),
+('courses_sections_relationship', 'MetaData Model', 'courses', 1, 1, 0, 'MANY', 'courses', 'sections', 'courses_pk'),
+('departments_courses_relationships', 'MetaData Model', 'departments', 1, 1, 1, 'MANY', 'departments', 'courses', 'departments_pk');
