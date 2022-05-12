@@ -240,3 +240,11 @@ INSERT INTO candidate_keys (candidate_key_name, rs_name, model_name) VALUES
 ('courses_pk', 'courses', 'MetaData Model'),
 ('courses_uk_01', 'courses', 'MetaData Model'),
 ('departments_pk', 'departments', 'MetaData Model');
+
+INSERT INTO primary_keys (model_name, pk_name) VALUES
+('MetaData Model', 'departments_pk'),
+('MetaData Model', 'courses_pk'),
+('MetaData Model', 'sections_pk'),
+('MetaData Model', 'students_pk'),
+('MetaData Model', 'enrollments_pk'),
+('MetaData Model', 'transcript_entries_pk');
