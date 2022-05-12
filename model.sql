@@ -271,22 +271,6 @@ INSERT INTO candidate_key_attributes (rs_name, model_name, ck_name, attribute_na
 ('courses', 'MetaData Model', 'courses_uk_01', 'title', 2),
 ('departments', 'MetaData Model', 'departments_pk', 'name', 1);
 
-INSERT INTO varchars (length, model_name, rs_name, attribute_name) VALUES
--- (100, 'MetaData Model', 'students', 'last_name');
--- (100, 'MetaData Model', 'students', 'first_name');
- (100, 'MetaData Model', 'departments', 'name');
--- (100, 'MetaData Model', 'courses', 'name'),
--- (100, 'MetaData Model', 'courses', 'description'),
--- (100, 'MetaData Model', 'courses', 'title'),
--- (100, 'MetaData Model', 'sections', 'department_name'),
--- (100, 'MetaData Model', 'sections', 'semester'),
--- (100, 'MetaData Model', 'sections', 'instructor'),
--- (100, 'MetaData Model', 'sections', 'days'),
--- (100, 'MetaData Model', 'enrollments', 'department_name'),
--- (100, 'MetaData Model', 'enrollments', 'semester'),
--- (100, 'MetaData Model', 'enrollments', 'grade'),
--- (100, 'MetaData Model', 'transcript_entries', 'department_name'),
--- (100, 'MetaData Model', 'transcript_entries', 'semester');
 
 insert into relationships (relationship_name, model_name, rs_name, min_parent_cardinality, max_parent_cardinality, min_child_cardinality, max_child_cardinality, parent, child, pk_name) values
 ('students_enrollments_relationship', 'MetaData Model', 'students', 1, 1, 0, 'MANY', 'students', 'enrollments', 'students_pk'),
