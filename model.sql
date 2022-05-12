@@ -221,7 +221,7 @@ INSERT INTO attributes (attribute_name, rs_name, model_name, data_type) VALUES
 ('student_id', 'enrollments', 'MetaData Model', 'int'),
 ('department_name', 'enrollments', 'MetaData Model', 'varchar'),
 ('course_number', 'enrollments', 'MetaData Model', 'int'),
-('sections_number', 'enrollments', 'MetaData Model', 'int'),
+('section_number', 'enrollments', 'MetaData Model', 'int'),
 ('year', 'enrollments', 'MetaData Model', 'int'),
 ('semester', 'enrollments', 'MetaData Model', 'varchar'),
 ('grade', 'enrollments', 'MetaData Model', 'varchar'),
