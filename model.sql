@@ -245,3 +245,12 @@ INSERT INTO varchars (length, model_name, rs_name, attribute_name) VALUES
 (100, 'MetaData Model', 'enrollments', 'grade'),
 (100, 'MetaData Model', 'transcript_entries', 'department_name'),
 (100, 'MetaData Model', 'transcript_entries', 'semester');
+
+
+
+
+/* TEST PLAN */
+1. Test that the model_date defaults to now() if not specified.
+2. Test that a key can only have attributes that come from the same relation scheme as the key itself.
+3. Test that you cannot use a float attribute in a candidate key.
+4. 
