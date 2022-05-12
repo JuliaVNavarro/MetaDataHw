@@ -32,9 +32,6 @@ END;
 
 
 4) A foreign key constraint cannot have the same name as a candidate key
-5) splitting the key
-*/
-
 DELIMITER //
 CREATE TRIGGER `candidate_keys_BEFORE_INSERT` BEFORE INSERT ON `candidate_keys` FOR EACH ROW BEGIN
     call get_key_name(new.candidate_key_name, new.model_name);
@@ -44,7 +41,6 @@ CREATE TRIGGER `primary_keys_BEFORE_INSERT` BEFORE INSERT ON `primary_keys` FOR 
     call get_key_name(new.pk_name, new.model_name);
 END;
 DELIMITER ;
-
 
 DELIMITER //
 CREATE PROCEDURE `get_key_name` (IN in_constraint_name VARCHAR(50),
@@ -67,4 +63,3 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-
