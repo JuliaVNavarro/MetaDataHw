@@ -311,3 +311,20 @@ INSERT INTO attribute_relationships (migrated_attribute, relationship_name, chil
 ('department_name', 'courses_sections_relationship', 'sections', 'MetaData Model', 'courses_pk', 'courses', 'name'),
 ('course_number', 'courses_sections_relationship', 'sections', 'MetaData Model', 'courses_pk', 'courses', 'number'),
 ('name', 'departments_courses_relationships', 'courses', 'MetaData Model', 'departments_pk', 'departments', 'name');
+
+INSERT INTO varchars (length, model_name, rs_name, attribute_name) VALUES
+(100, 'MetaData Model', 'students', 'last_name'),
+(100, 'MetaData Model', 'students', 'first_name'),
+(100, 'MetaData Model', 'departments', 'name'),
+(100, 'MetaData Model', 'courses', 'name'),
+(100, 'MetaData Model', 'courses', 'description'),
+(100, 'MetaData Model', 'courses', 'title'),
+(100, 'MetaData Model', 'sections', 'department_name'),
+(100, 'MetaData Model', 'sections', 'semester'),
+(100, 'MetaData Model', 'sections', 'instructor'),
+(100, 'MetaData Model', 'sections', 'days'),
+(100, 'MetaData Model', 'enrollments', 'department_name'),
+(100, 'MetaData Model', 'enrollments', 'semester'),
+(100, 'MetaData Model', 'enrollments', 'grade'),
+(100, 'MetaData Model', 'transcript_entries', 'department_name'),
+(100, 'MetaData Model', 'transcript_entries', 'semester');
