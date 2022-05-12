@@ -18,12 +18,13 @@ END;
 
 CREATE TRIGGER `key_BEFORE_INSERT` BEFORE INSERT ON `candidate_key_attributes` FOR EACH ROW BEGIN
 
-    IF(EXISTS (
-        SELECT rs_name
-        FROM candidate_keys
-        WHERE candidate_key_name = new.candidate_key_name)) != new.rs_name)
-        THEN SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'a key can only have attributes that come from the same relation scheme as the key itself';
+  DECLARE ck_rs_name VARCHAR(30);
+  SELECT rs_name INTO ck_rs_name
+  FROM candidate_keys ck
+  WHERE ck.candidate_key_name = new.ck_name;
+  IF (new.rs_name != ck_rs_name) THEN
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A key can only have attributes that come from the same relation scheme as the key itself';
   END IF;
 END;
 
