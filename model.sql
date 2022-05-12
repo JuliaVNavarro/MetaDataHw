@@ -232,3 +232,11 @@ INSERT INTO attributes (attribute_name, rs_name, model_name, data_type) VALUES
 ('year', 'transcript_entries', 'MetaData Model', 'int'),
 ('semester', 'transcript_entries', 'MetaData Model', 'varchar');
 
+INSERT INTO candidate_keys (candidate_key_name, rs_name, model_name) VALUES
+('students_pk', 'students', 'MetaData Model'),
+('enrollments_pk', 'enrollments', 'MetaData Model'),
+('transcript_entries_pk', 'transcript_entries', 'MetaData Model'),
+('sections_pk', 'sections', 'MetaData Model'),
+('courses_pk', 'courses', 'MetaData Model'),
+('courses_uk_01', 'courses', 'MetaData Model'),
+('departments_pk', 'departments', 'MetaData Model');
