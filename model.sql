@@ -124,11 +124,11 @@ BEGIN
 	DECLARE message VARCHAR(100);
     IF (SELECT	count(*)
 		FROM	attributes
-        WHERE	attributeName = in_attribute_name) <> 1 THEN
+        WHERE	attribute_name = in_attribute_name) <> 1 THEN
 		SIGNAL SQLSTATE '45000' set message_text = 'Error, unable to find that attribute';
-	ELSEIF (SELECT	datatype
+	ELSEIF (SELECT	data_type
 			FROM	attributes
-			WHERE	attributeName = in_attribute_name) <> attribute_type THEN
+			WHERE	attribute_name = in_attribute_name) <> attribute_type THEN
 		SET message = CONCAT('Error, unable to set these properties for attribute that is not: ', attribute_type);
 		SIGNAL SQLSTATE '45000' set message_text = message;
 	END IF;
@@ -136,12 +136,12 @@ END;
 
 CREATE DEFINER=`root`@`localhost` TRIGGER `decimals_BEFORE_INSERT` BEFORE INSERT ON `decimals` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
-	CALL attributes_check_type (new.attributeName, 'decimal');
+	CALL attributes_check_type (new.attribute_name, 'decimal');
 END;
 
 CREATE DEFINER=`root`@`localhost` TRIGGER `varchars_BEFORE_INSERT` BEFORE INSERT ON `varchars` FOR EACH ROW BEGIN
 	-- Make sure that this is a decimal category of a proper decimal attribute.
-	CALL attributes_check_type (new.attributeName, 'varchar');
+	CALL attributes_check_type (new.attribute_name, 'varchar');
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `attribute_complete`(IN v_attribute_name VARCHAR(64))
@@ -154,45 +154,45 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `attribute_complete`(IN v_attribute_
 BEGIN
 	IF NOT EXISTS (	SELECT	'X'
 					FROM	attributes
-                    WHERE	attributeName = v_attribute_name) THEN
+                    WHERE	attribute_name = v_attribute_name) THEN
 		-- Attribute does not exist, no need to check further
 		SIGNAL SQLSTATE '45000' set message_text = 'Error, unable to find that attribute';
-	ELSEIF (	SELECT	datatype
+	ELSEIF (	SELECT	data_type
 				FROM	attributes
-                WHERE	attributeName = v_attribute_name) = 'decimal' AND
+                WHERE	attribute_name = v_attribute_name) = 'decimal' AND
 			NOT EXISTS (	SELECT	'X'
 							FROM	decimals
-                            WHERE	attributeName = v_attribute_name) THEN
+                            WHERE	attribute_name = v_attribute_name) THEN
 		-- It says it's a decimal, but the category entry is missing.
 		SIGNAL SQLSTATE '45000' set message_text = 'Error, missing precision and scale for this attribute!';
-	ELSEIF (	SELECT	datatype
+	ELSEIF (	SELECT	data_type
 				FROM	attributes
-                WHERE	attributeName = v_attribute_name) = 'varchar' AND
+                WHERE	attribute_name = v_attribute_name) = 'varchar' AND
 			NOT EXISTS (	SELECT	'X'
 							FROM	varchars
-                            WHERE	attributeName = v_attribute_name) THEN
+                            WHERE	attribute_name = v_attribute_name) THEN
 		-- It says it's a varchar, but the category entry is missing.
 		SIGNAL SQLSTATE '45000' set message_text = 'Error, missing length for this attribute!';
 	END IF;
 END;
 
 CREATE DEFINER=`root`@`localhost` TRIGGER `attributes_BEFORE_UPDATE` BEFORE UPDATE ON `attributes` FOR EACH ROW BEGIN
-	IF new.datatype <> old.attributeName THEN
+	IF new.data_type <> old.attribute_name THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error, you cannot change the type of an attribute!';
 	END IF;
 END;
 
-INSERT INTO datatypes (datatype) VALUES
+INSERT INTO data_types (data_type) VALUES
 ('int'), ('decimal'), ('float'), ('varchar'), ('date'), ('time');
 
-INSERT INTO models (modelName, modelDescription, modelDate) VALUES
+INSERT INTO models (model_name, model_description, model_date) VALUES
 ('Sample Model', 'A sample of a model', '2022-04-19');
 
-INSERT INTO relationschemes (rsName, rsDescription, rsModelName) VALUES
+INSERT INTO relation_schemes (rs_name, rs_description, rs_model_name) VALUES
 ('Employees', 'A person who works for a company', 'Sample Model'),
 ('Departments', 'A part of a company', 'Sample Model');
 
-INSERT INTO attributes (attributeName, rsName, modelName, datatype) VALUES
+INSERT INTO attributes (attribute_name, rs_name, model_name, data_type) VALUES
 ('firstName', 'Employees', 'Sample Model', 'varchar'),
 ('lastName', 'Employees', 'Sample Model', 'varchar'),
 ('SSN', 'Employees', 'Sample Model', 'int'),
@@ -203,25 +203,25 @@ INSERT INTO attributes (attributeName, rsName, modelName, datatype) VALUES
 ('description', 'Departments', 'Sample Model', 'varchar'),
 ('abbreviation', 'Departments', 'Sample Model', 'varchar');
 
-INSERT INTO attributes (attributeName, rsName, modelName, datatype) VALUES
+INSERT INTO attributes (attribute_name, rs_name, model_name, data_type) VALUES
 ('employeeID', 'Employees', 'Sample Model', 'varchar');
 
-INSERT INTO candidatekeys (candidateKeyName, rsName, modelName) VALUES
+INSERT INTO candidate_keys (candidate_key_name, rs_name, model_name) VALUES
 ('Employees Primary Key', 'Employees', 'Sample Model'),
 ('Departments Primary Key', 'Departments', 'Sample Model');
 
-INSERT INTO candidatekeyattributes (rsName, modelName, ckName, attributeName, orderNumber) VALUES
+INSERT INTO candidate_key_attributes (rs_name, model_name, ck_name, attribute_name, order_number) VALUES
 ('Employees', 'Sample Model', 'Employees Primary Key', 'employeeID', 1),
 ('Departments', 'Sample Model', 'Departments Primary Key', 'name', 1);
 
-INSERT INTO candidatekeys (candidateKeyName, rsName, modelName) VALUES
+INSERT INTO candidate_keys (candidate_key_name, rs_name, model_name) VALUES
 ('Employees Candidate Key', 'Employees', 'Sample Model');
 
-INSERT INTO candidatekeyattributes (rsName, modelName, ckName, attributeName, orderNumber) VALUES
+INSERT INTO candidate_key_attributes (rs_name, model_name, ck_name, attribute_name, order_number) VALUES
 ('Employees', 'Sample Model', 'Employees Candidate Key', 'SSN', 1);
 
-INSERT INTO decimals (`precision`, scale, modelName, rsName, attributeName, datatype) VALUES
+INSERT INTO decimals (`precision`, scale, model_name, rs_name, attribute_name, data_type) VALUES
 (10, 2, 'Sample Model', 'Employees', 'annualSalary', 'decimal');
 
-INSERT INTO varchars (length, modelName, rsName, attributeName, datatype) VALUES
+INSERT INTO varchars (length, model_name, rs_name, attribute_name, data_type) VALUES
 (100, 'Sample Model', 'Employees', 'firstName', 'varchar');
